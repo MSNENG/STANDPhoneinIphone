@@ -9,8 +9,15 @@
 
 <h2>Create Account</h2>
 
+<input type="text" id="username" placeholder="Username"><br><br>
+
+<input type="text" id="phone" placeholder="05XXXXXXXX"><br><br>
+
 <input type="email" id="email" placeholder="Email"><br><br>
+
 <input type="password" id="password" placeholder="Password"><br><br>
+
+<input type="password" id="confirmPassword" placeholder="Confirm Password"><br><br>
 
 <button onclick="signup()">Create Account</button>
 
@@ -19,7 +26,11 @@
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC7mw9sRiDIqQVVoiFJGY8PcfNWz0kfGpQ",
@@ -33,18 +44,53 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-window.signup = function () {
+window.signup = async function () {
 
-  const email = document.getElementById("email").value;
+  const username = document.getElementById("username").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
+  const confirmPassword = document.getElementById("confirmPassword").value;
+  const result = document.getElementById("result");
 
-  createUserWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      document.getElementById("result").innerText = "Account Created";
-    })
-    .catch((error) => {
-      document.getElementById("result").innerText = error.message;
+  if (!username) {
+    result.innerText = "Please enter a username";
+    return;
+  }
+
+  if (!/^05\d{8}$/.test(phone)) {
+    result.innerText = "Phone number must start with 05 and contain exactly 10 digits";
+    return;
+  }
+
+  if (password.length < 6) {
+    result.innerText = "Password must be at least 6 characters";
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    result.innerText = "Passwords do not match";
+    return;
+  }
+
+  try {
+
+    const userCredential =
+      await createUserWithEmailAndPassword(auth, email, password);
+
+    await updateProfile(userCredential.user, {
+      displayName: username
     });
+
+    result.innerText = "Account created successfully";
+
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 1000);
+
+  } catch (error) {
+    result.innerText = error.message;
+  }
 
 };
 
