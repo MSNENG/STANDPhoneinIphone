@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phoneinipone</title>
+</head>
+<body>
+
+<h1>Welcome to Phoneinipone</h1>
+
+<p id="user"></p>
+
+<button id="logoutBtn">Logout</button>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC7mw9sRiDIqQVVoiFJGY8PcfNWz0kfGpQ",
+  authDomain: "phoneinipone.firebaseapp.com",
+  projectId: "phoneinipone",
+  storageBucket: "phoneinipone.firebasestorage.app",
+  messagingSenderId: "57581989221",
+  appId: "1:57581989221:web:7846f8c2c034af9774c58c"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    document.getElementById("user").innerText =
+      "Logged in as: " + user.email;
+  } else {
+    window.location.href = "login.html";
+  }
+});
+
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  signOut(auth).then(() => {
+    window.location.href = "login.html";
+  });
+});
+
+</script>
+
+</body>
+</html>
