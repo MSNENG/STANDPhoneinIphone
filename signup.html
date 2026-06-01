@@ -54,12 +54,12 @@ window.signup = async function () {
   const result = document.getElementById("result");
 
   if (!username) {
-    result.innerText = "Please enter a username";
+    result.innerText = "Please enter username";
     return;
   }
 
   if (!/^05\d{8}$/.test(phone)) {
-    result.innerText = "Phone number must start with 05 and contain exactly 10 digits";
+    result.innerText = "Phone must start with 05 and be 10 digits";
     return;
   }
 
@@ -84,9 +84,10 @@ window.signup = async function () {
 
     result.innerText = "Account created successfully";
 
-    setTimeout(() => {
-      window.location.href = "login.html";
-    }, 1000);
+    // حل مشكلة الانتقال في GitHub Pages
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    window.location.replace("login.html");
 
   } catch (error) {
     result.innerText = error.message;
